@@ -5,6 +5,7 @@ import { api } from "~/utils/api";
 import "~/styles/globals.css";
 import { store } from '../app/store'
 import { Provider } from 'react-redux'
+import 'react-toastify/dist/ReactToastify.css';
 
 const MyApp: AppType<{ session: Session | null }> = ({
   Component,
