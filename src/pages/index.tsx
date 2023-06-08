@@ -1,20 +1,27 @@
-import { useQuery } from "@tanstack/react-query";
 import { type NextPage } from "next";
 import Head from "next/head";
-import Image from "next/image";
+import Header from "~/components/Header";
+import ProductComponent from "~/components/home/ProductComponent ";
+import { useSelector, useDispatch } from "react-redux";
+import { AppDispatch, RootState } from "~/app/store";
 
-import type { Product } from "~/types/products.types";
+import type { Product as ProductType } from "~/types/products.types";
+import { useEffect, useRef } from "react";
+import { fetchItems } from "~/app/slices/itemSlice";
 
 
 const Home: NextPage = () => {
-
-  // this is for your reference only, you can change it to whatever you want
-  const { data, isLoading } = useQuery<Product[]>(['products'], async () => {
-    const res = await fetch('https://fakestoreapi.com/products')
-    return res.json()
-  })
-
-
+  const tracking = useRef(true)
+  const { items } = useSelector((state: RootState) => state.items)
+  const dispatch = useDispatch<AppDispatch>()
+  useEffect(() => {
+    if (tracking.current) {
+      dispatch(fetchItems())
+    }
+    return () => {
+      tracking.current = false
+    }
+  }, [])
   return (
     <>
       <Head>
@@ -23,31 +30,19 @@ const Home: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <h1 className="mb-4 text-4xl text-center text-gray-800 font-bold font-sans">
-        NextGenX E-commerce
-      </h1>
-      <p className="text-sm text-center text-gray-600 font-sans">
-        Get started here
-      </p>
+      <Header />
 
-        {isLoading ? (
-          <>Loading...</>
-        ): (
-          <div>
-            {data?.map((product) => (
-              <div key={product.id}>
-                <Image width={200} height={200} src={product.image} alt={product.title} />
-                <h1>{product.title}</h1>
-              </div>
-            ))}
-          </div>
-        )}
-
-      
-      
+      {items.length < 1 ? (
+        <>Loading...</>
+      ) : (
+        <div className='flex justify-start gap-2 flex-wrap p-3'>
+          {items?.map((item: ProductType) => (
+            <ProductComponent key={item.id} product={item} />
+          ))}
+        </div>
+      )}
 
     </>
   );
 };
-
 export default Home;
