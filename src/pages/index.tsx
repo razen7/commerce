@@ -37,7 +37,7 @@ const Home: NextPage = () => {
       ) : (
         <div className='flex justify-start gap-2 flex-wrap p-3'>
           {items?.map((item: ProductType) => (
-            <ProductComponent key={item.id} product={item} />
+            <ProductComponent key={item.id} item={item} />
           ))}
         </div>
       )}
